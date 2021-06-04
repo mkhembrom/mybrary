@@ -5,6 +5,7 @@ if(process.env.NODE_ENV !== 'production') {
 }
 const express = require('express');
 const expressLayout = require('express-ejs-layouts');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -12,9 +13,11 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 const indexRouter = require('./routes');
+const authorRouter = require('./routes/authors');
 
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: '10mb', extended: false}));
 /** Set View */
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -29,6 +32,7 @@ db.on('error', error => console.error(error));
 db.once('open', () => console.log('Connected to Mongoose'));
 
 app.use('/', indexRouter);
+app.use('/authors', authorRouter)
 
 app.listen(PORT, () => {
     console.clear();
